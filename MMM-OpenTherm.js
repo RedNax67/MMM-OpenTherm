@@ -51,6 +51,7 @@ Module.register("MMM-OpenTherm", {
 		this.chPressure = null;
 		this.outsideTemperature = null;
 		this.flame = null;
+		this.chmode = null;
 
 		this.loaded = false;
 		this.scheduleUpdate(this.config.initialLoadDelay);
@@ -180,6 +181,9 @@ Module.register("MMM-OpenTherm", {
 		this.flame = "";
 		if (data.flame.value == 1) {
 			this.flame = "wi-fire";
+			if (data.dhwmode.value == 0) {
+				this.flame = "wi-raindrop"
+			}
 		}
 
 		// this.flame = "wi-fire";

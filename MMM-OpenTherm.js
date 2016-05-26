@@ -51,7 +51,7 @@ Module.register("MMM-OpenTherm", {
 		this.chPressure = null;
 		this.outsideTemperature = null;
 		this.flame = null;
-		this.chmode = null;
+		this.alert = null;
 
 		this.loaded = false;
 		this.scheduleUpdate(this.config.initialLoadDelay);
@@ -128,7 +128,17 @@ Module.register("MMM-OpenTherm", {
 		outsideTempCell.innerHTML = this.outsideTemperature;
 		row.appendChild(outsideTempCell);
 
+		var tabledata = document.createElement("td");
+		tabledata.setAttribute("colspan", "2");
+
+		var alertIconCell = document.createElement("i");
+		alertIconCell.className = "center bright " + this.alert;
+		tabledata.appendChild(alertIconCell);
+
+		row.appendChild(tabledata);
+		
 		wrapper.appendChild(table);
+
 		return wrapper;
 
 	},
@@ -175,17 +185,22 @@ Module.register("MMM-OpenTherm", {
 	 */
 	processWeather : function (data) {
 		this.roomTemperature = this.roundValue(data.temperature.value);
-		this.chPressure = data.pressure.value;
 		this.setPoint = data.setpoint.value;
 		this.outsideTemperature = data.outside.value;
 		this.flame = "";
 		if (data.flame.value == 1) {
 			this.flame = "wi-fire";
 			if (data.dhwmode.value == 0) {
-				this.flame = "wi-raindrop"
+				this.flame = "wi-raindrop";
 			}
 		}
 
+		this.chPressure = data.pressure.value;
+		if ( this.chPressure < 1 ) {
+			this.alert = "fa fa-warning";
+		}
+
+		
 		// this.flame = "wi-fire";
 
 		this.loaded = true;

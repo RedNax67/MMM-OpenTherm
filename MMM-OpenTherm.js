@@ -52,7 +52,7 @@ Module.register("MMM-OpenTherm", {
 		this.outsideTemperature = null;
 		this.flame = null;
 		this.alert = null;
-
+		this.chPressurColor = null;
 		this.loaded = false;
 		this.scheduleUpdate(this.config.initialLoadDelay);
 
@@ -98,13 +98,19 @@ Module.register("MMM-OpenTherm", {
 		setPointCell.innerHTML = this.setPoint;
 		row.appendChild(setPointCell);
 
-		var chPressureIconCell = document.createElement("td");
-		chPressureIconCell.className = "small center wi wi-barometer";
-		row.appendChild(chPressureIconCell);
+		var tabledata = document.createElement("td");
+		var chPressureIconCell = document.createElement("i");
+		chPressureIconCell.className = "small center wi wi-barometer " + this.chPressurColor;
+		tabledata.appendChild(chPressureIconCell);
+		row.appendChild(tabledata);
+		
 
+		var tabledata = document.createElement("td");
 		var chPressureCell = document.createElement("td");
+		chPressureCell.className = "small center " + this.chPressurColor;
 		chPressureCell.innerHTML = this.chPressure;
-		row.appendChild(chPressureCell);
+		tabledata.appendChild(chPressureCell);
+		row.appendChild(tabledata);
 
 		//      ROW
 
@@ -195,9 +201,12 @@ Module.register("MMM-OpenTherm", {
 			}
 		}
 
+		this.chPressurColor = "";
+		this.alert = "";
 		this.chPressure = data.pressure.value;
 		if ( this.chPressure < 1 ) {
-			this.alert = "fa fa-warning";
+			this.alert = "yellow fa fa-warning";
+			this.chPressurColor = "yellow";
 		}
 
 		

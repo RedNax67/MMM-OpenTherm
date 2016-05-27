@@ -1,6 +1,17 @@
 # Module: OpenTherm
 This module information from your OpenTherm gateway.
 
+For this to work you'll need:
+
+An OpenTherm controlled heating/cooling device
+An OpenTherm gateway http://otgw.tclcode.com/
+The OpenTherm Monitor application running somewhere http://otgw.tclcode.com/otmonitor.html
+
+NOTE: The otmonitor version hosted on the website doesn't have the access-allow-origin-header so the browser running MM will probably reject the json response. Luckily the author also supplies the source and instructions on how to build/compile your own version.
+
+I've compiled a (RpI) version of the otmonitor program with this header included. Anyone in need of if, please let me know.
+
+
 ## Using the module
 
 To use this module, add it to the modules array in the `config/config.js` file:

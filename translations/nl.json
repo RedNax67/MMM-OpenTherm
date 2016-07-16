@@ -1,0 +1,30 @@
+{
+	/* GENERAL */
+	"APIKEY": "Zet een <i>apikey</i> in de config voor module: ",
+	
+	"0": "Onderbreking aanvoervoeler: Draadonderbreking, defecte NTC, meervoudige stekker elektronica niet vastgezet.",
+	"1": "Onderbreking retourvoeler: Draadonderbreking, defecte NTC, meervoudige steker elektronica niet vastgezet.",
+	"5": "Onderbreking TTB (Thermisch Terugslag Beveiliging): Koude voeler TTB onderbroken.",
+	"6": "Onderbreking TTB (Thermisch Terugslag Beveiliging): Hete voeler TTB onderbroken.",
+	"10": "Kortsluiting aanvoervoeler: NTC defect, draad aan massa, stekker vochtig.",
+	"11": "Kortsluiting retourvoeler: NTC defect, draad aan massa, stekker vochtig.",
+	"15": "Kortsluiting TTB (Thermisch Terugslag Beveiliging): Koude voeler TTB-sluiting.",
+	"16": "Kortsluiting TTB (Thermisch Terugslag Beveiliging): Hete voeler TTB-sluiting.",
+	"20": "Max. temperatuurbegrenzer (aanvoertemperatuur te hoog): Aanvoer- of retour- NTC slecht, slechte massa verbinding.",
+	"22": "Droogkookbeveiliging: Te lage cv-waterdruk.",
+	"23": "Watergebrek: Te groot verschil tussen aanvoer- en retourvoeler, pomp defect.",
+	"24": "Watergebrek: Temperatuur stijgt te snel, pomp stopt, te lage cv-waterdruk.",
+	"27": "Foute ionisatie meting: Gasblok laat gas door.",
+	"28": "Geen ontsteking tijdens opstarten: Geen gasvoordruk, te lage gasvoordruk, slechte ontsteking door overslag ontsteekpen, geen aarding.",
+	"29": "Geen herontsteking: Gastoevoer onderbroken, recirculatie verbrandingsgassen, slechte aarding.",
+	"32": "Luchtzijdige vorstbeveiliging, toerental ventilator niet juist: Stekker ventilator los, ventilator blokkeert, kabelboom defect.",
+	"33": "Luchtzijdige vorstbeveiliging: Luchtdrukverschilschakelaar schakelt niet.",
+	"36": "TTB-Beveiliging: Terugslag van verbrandingsgassen.",
+	"37": "Toerental ventilator tijdens branderbedrijf te groot of te klein: Luchtdrukverschilschakelaar defect, ventilator defect, Elektronica defect.",
+	"38": "Kortsluiting ventilator: Ventilator defect.",
+	"41": "Start proefprogramma op: Stel gassoort, branderbelasting, werkpunt in programma P1, P2, P15, P16.",
+	"60": "Elektronicafout: Elektronica defect.",
+	"64": "NTC meet fout: Aansluiting NTC aanvoer en retour, maken sluiting in bekabeling.",
+	"67": "Elektronicafout: Elektronica defect.",
+	"255": ""
+}

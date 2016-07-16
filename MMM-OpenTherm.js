@@ -21,6 +21,16 @@ Module.register("MMM-OpenTherm", {
 
 	},
 
+	// Define required translations.
+	getTranslations: function() {
+		return {
+			en: "translations/en.json",
+			nl: "translations/nl.json",
+			de: "translations/de.json",
+			dl: "translations/de.json"			
+		}
+	},
+
 	// Define required scripts.
 	getScripts : function () {
 		return ["moment.js"];
@@ -29,14 +39,6 @@ Module.register("MMM-OpenTherm", {
 	// Define required scripts.
 	getStyles : function () {
 		return ["weather-icons.css", "weather-icons-wind.css", "MMM-OpenTherm.css"];
-	},
-
-	// Define required translations.
-	getTranslations : function () {
-		// The translations for the defaut modules are defined in the core translation files.
-		// Therefor we can just return false. Otherwise we should have returned a dictionairy.
-		// If you're trying to build yiur own module including translations, check out the documentation.
-		return false;
 	},
 
 	// Define start sequence.
@@ -55,7 +57,10 @@ Module.register("MMM-OpenTherm", {
 		this.chPressurColor = null;
 		this.loaded = false;
 		this.scheduleUpdate(this.config.initialLoadDelay);
-
+		this.minPressure = null;
+		this.fault = null;
+		this.faultcode = null;
+		this.faulttext = null;
 		this.updateTimer = null;
 
 	},
@@ -120,7 +125,7 @@ Module.register("MMM-OpenTherm", {
 		var tabledata = document.createElement("td");
 
 		var flameIconCell = document.createElement("i");
-		flameIconCell.className = "center bright wi " + this.flame;
+		flameIconCell.className = "small center bright wi " + this.flame;
 		tabledata.appendChild(flameIconCell);
 
 		row.appendChild(tabledata);
@@ -138,8 +143,23 @@ Module.register("MMM-OpenTherm", {
 		tabledata.setAttribute("colspan", "2");
 
 		var alertIconCell = document.createElement("i");
-		alertIconCell.className = "center bright " + this.alert;
+		alertIconCell.className = "small center bright " + this.alert;
 		tabledata.appendChild(alertIconCell);
+
+		row.appendChild(tabledata);
+
+		//      ROW
+
+		var row = document.createElement("tr");
+		table.appendChild(row);
+
+		var tabledata = document.createElement("td");
+		tabledata.setAttribute("colspan", "6");
+		
+		var alertTxtCell = document.createElement("i");
+		alertTxtCell.className = "small center bright red";
+		alertTxtCell.innerHTML = this.faulttext;
+		tabledata.appendChild(alertTxtCell);
 
 		row.appendChild(tabledata);
 		
@@ -196,7 +216,7 @@ Module.register("MMM-OpenTherm", {
 		this.flame = "";
 		if (data.flame.value == 1) {
 			this.flame = "wi-fire";
-			if (data.dhwmode.value == 0) {
+			if (data.dhwmode.value == 1) {
 				this.flame = "wi-raindrop";
 			}
 		}
@@ -204,13 +224,24 @@ Module.register("MMM-OpenTherm", {
 		this.chPressurColor = "";
 		this.alert = "";
 		this.chPressure = data.pressure.value;
-		if ( this.chPressure < 1 ) {
+		if ( this.chPressure < this.minPressure ) {
 			this.alert = "yellow fa fa-warning";
 			this.chPressurColor = "yellow";
 		}
 
+		this.fault = data.fault.value
+		if ( this.fault > 0 || data.faultcode.value != 255 ) {
+			this.alert = "center red fa fa-warning";
+		}
 		
-		// this.flame = "wi-fire";
+		this.faulttext = this.wordwrap(this.translate(data.faultcode.value),35,'<BR>');
+		
+		
+
+		
+//		this.flame = "wi-fire";
+//		this.alert = "yellow fa fa-warning";
+//		this.chPressurColor = "yellow";
 
 		this.loaded = true;
 		this.updateDom(this.config.animationSpeed);
@@ -232,6 +263,20 @@ Module.register("MMM-OpenTherm", {
 			self.updateWeather();
 		}, nextLoad);
 	},
+	
+	wordwrap: function ( str, width, brk ) {
+ 
+		brk = brk || 'n';
+		width = width || 75;
+ 
+		if (!str) { return str; }
+ 
+		var re = new RegExp('.{1,'+ width +'}(\\s|$)|\\ S+?(\\s|$)','g'); 
+	
+		return str.match( RegExp(re) ).join( brk );
+ 
+	},
+
 
 	roundValue : function (temperature) {
 		return parseFloat(temperature).toFixed(1);

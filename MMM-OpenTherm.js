@@ -28,7 +28,7 @@ Module.register("MMM-OpenTherm", {
 			nl: "translations/nl.json",
 			de: "translations/de.json",
 			dl: "translations/de.json"			
-		}
+		};
 	},
 
 	// Define required scripts.
@@ -56,14 +56,23 @@ Module.register("MMM-OpenTherm", {
 		this.alert = null;
 		this.chPressurColor = null;
 		this.loaded = false;
-		this.scheduleUpdate(this.config.initialLoadDelay);
 		this.minPressure = null;
 		this.fault = null;
 		this.faultcode = null;
 		this.faulttext = null;
 		this.updateTimer = null;
+        
+    this.getOpentherm();
 
 	},
+    
+  	getOpentherm: function() {
+		Log.info("Opentherm: Getting data.");
+		
+		this.sendSocketNotification("GET_OPENTHERM",this.config);
+
+	},
+
 
 	// Override dom generator.
 	getDom : function () {
@@ -169,40 +178,6 @@ Module.register("MMM-OpenTherm", {
 
 	},
 
-	/* updateWeather(compliments)
-	 * Requests new data from openweather.org.
-	 * Calls processWeather on succesfull response.
-	 */
-	updateWeather : function () {
-		var url = this.config.apiBase;
-		var self = this;
-		var retry = true;
-
-		var weatherRequest = new XMLHttpRequest();
-		weatherRequest.open("GET", url, false);
-
-		weatherRequest.onreadystatechange = function () {
-
-			if (this.readyState === 4) {
-				if (this.status === 200) {
-					self.processWeather(JSON.parse(this.response));
-				} else if (this.status === 401) {
-					self.config.appid = "";
-					self.updateDom(self.config.animationSpeed);
-
-					Log.error(self.name + ": Incorrect APPID.");
-					retry = false;
-				} else {
-					Log.error(self.name + ": Could not load weather.");
-				}
-
-				if (retry) {
-					self.scheduleUpdate((self.loaded) ? -1 : self.config.retryDelay);
-				}
-			}
-		};
-		weatherRequest.send();
-	},
 
 	/* processWeather(data)
 	 * Uses the received data to set the various values.
@@ -229,42 +204,30 @@ Module.register("MMM-OpenTherm", {
 			this.chPressurColor = "yellow";
 		}
 
-		this.fault = data.fault.value
+		this.fault = data.fault.value;
 		if ( this.fault > 0 || data.faultcode.value != 255 ) {
 			this.alert = "center red fa fa-warning";
 		}
 		
 		this.faulttext = this.wordwrap(this.translate(data.faultcode.value),35,'<BR>');
 		
-		
-
-		
-//		this.flame = "wi-fire";
-//		this.alert = "yellow fa fa-warning";
-//		this.chPressurColor = "yellow";
-
 		this.loaded = true;
 		this.updateDom(this.config.animationSpeed);
 	},
-
-	/* scheduleUpdate()
-	 * Schedule next update.
-	 *
-	 * argument delay number - Milliseconds before next update. If empty, this.config.updateInterval is used.
-	 */
-	scheduleUpdate : function (delay) {
-		var nextLoad = this.config.updateInterval;
-		if (typeof delay !== "undefined" && delay >= 0) {
-			nextLoad = delay;
-		}
-
+    
+  	socketNotificationReceived: function(notification, payload) {
 		var self = this;
-		setTimeout(function () {
-			self.updateWeather();
-		}, nextLoad);
+
+		//Log.log(this.name + " received a socket notification: " + notification + " - Payload: " + payload);
+		
+		if(notification === "OPENTHERM"){
+				//Log.info('RECEIVED OPENTHERM MSG: '+ payload);
+                self.processWeather(JSON.parse(payload));
+		}
+		
 	},
-	
-	wordwrap: function ( str, width, brk ) {
+    
+  	wordwrap: function ( str, width, brk ) {
  
 		brk = brk || 'n';
 		width = width || 75;
@@ -278,7 +241,9 @@ Module.register("MMM-OpenTherm", {
 	},
 
 
-	roundValue : function (temperature) {
+    roundValue : function (temperature) {
 		return parseFloat(temperature).toFixed(1);
 	}
+
+
 });
